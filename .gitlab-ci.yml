@@ -1,0 +1,55 @@
+workflow:
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "production"'
+        - when: never
+
+stages:
+    - build
+    - deploy
+
+build:
+    stage: build
+    image: node:22
+    environment:
+        name: $CI_COMMIT_REF_NAME
+    script:
+        - npm ci
+        - npm run build
+        - cp $ENV_FILE  dist/.env
+        - cp ecosystem.config.js dist/
+        - cp package.json package-lock.json dist/
+        - tar -czf app.tar.gz -C dist .
+    artifacts:
+        paths:
+            - app.tar.gz
+        expire_in: 1 hour
+
+deploy:
+    stage: deploy
+    image: node:22
+    environment:
+        name: $CI_COMMIT_REF_NAME
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+          when: manual
+        - if: '$CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "development"'
+          when: always
+    before_script:
+        - apt-get update -qq && apt-get install -y openssh-client
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+    script:
+        - echo "Deploying to $SERVER_IP..."
+        - scp app.tar.gz $SERVER_USER@$SERVER_IP:/tmp/app.tar.gz
+        - |
+            ssh $SERVER_USER@$SERVER_IP << EOF
+              set -e
+              mkdir -p $APP_DIR
+              tar -xzf /tmp/app.tar.gz -C $APP_DIR
+              rm /tmp/app.tar.gz
+              cd $APP_DIR
+              npm ci
+              pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            EOF
