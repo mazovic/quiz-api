@@ -1,5 +1,6 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo, Sequelize } from 'sequelize-typescript';
 import { SubCategory } from '../../categories/models/SubCategory';
+import { Op } from 'sequelize';
 
 export enum Difficulty {
 	EASY = 'easy',
@@ -65,6 +66,9 @@ export class Question extends Model {
 		return await Question.findByPk(id);
 	}
 
+	static async getCount(subCatIds: number[]): Promise<number> {
+		return await Question.count({ where: { subCategoryId: { [Op.in]: subCatIds } } });
+	}
 	static async getLevelingQuestions(): Promise<Question[]> {
 		const easyQuestions = await Question.findAll({
 			where: { subCategoryId: 8, difficulty: Difficulty.EASY },
