@@ -44,6 +44,11 @@ class QuestionService {
 
 		await Question.deleteQuestion(question);
 	}
+
+	static async getLevelingQuestions(): Promise<ResI> {
+		const questions = await Question.getLevelingQuestions();
+		return { msg: 'OK', data: questions };
+	}
 }
 
 export default QuestionService;

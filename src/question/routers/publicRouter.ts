@@ -8,6 +8,8 @@ router.post('/', catchAsync(controller.createQuestion));
 
 router.get('/', catchAsync(controller.listAllQuestions));
 
+router.get('/leveling', catchAsync(controller.getLevelingQuestions));
+
 router.get('/:id', catchAsync(controller.getQuestionById));
 
 router.put('/:id', catchAsync(controller.updateQuestion));

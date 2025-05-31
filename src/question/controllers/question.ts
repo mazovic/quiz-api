@@ -47,10 +47,16 @@ const deleteQuestion = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.DELETED).end();
 };
 
+const getLevelingQuestions = async (req: Request, res: Response): Promise<void> => {
+	const data = await QuestionService.getLevelingQuestions();
+	res.status(StatusCodes.OK).json(data);
+};
+
 export default {
 	createQuestion,
 	listAllQuestions,
 	getQuestionById,
 	updateQuestion,
 	deleteQuestion,
+	getLevelingQuestions,
 };

@@ -65,6 +65,27 @@ export class Question extends Model {
 		return await Question.findByPk(id);
 	}
 
+	static async getLevelingQuestions(): Promise<Question[]> {
+		const easyQuestions = await Question.findAll({
+			where: { subCategoryId: 8, difficulty: Difficulty.EASY },
+			limit: 5,
+			order: [Sequelize.literal('RAND()')],
+		});
+
+		const mediumQuestions = await Question.findAll({
+			where: { subCategoryId: 8, difficulty: Difficulty.MEDIUM },
+			limit: 5,
+			order: [Sequelize.literal('RAND()')],
+		});
+
+		const hardQuestions = await Question.findAll({
+			where: { subCategoryId: 8, difficulty: Difficulty.HARD },
+			limit: 5,
+			order: [Sequelize.literal('RAND()')],
+		});
+
+		return [...easyQuestions, ...mediumQuestions, ...hardQuestions];
+	}
 	static async getAllQuestions(
 		subCategoryId: number,
 		questionCount: number,
