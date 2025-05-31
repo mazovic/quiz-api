@@ -1,11 +1,11 @@
-import { Exception, generateVerificationCode, hashPassword, sendEmail, StatusCodes } from '../../utils';
+import { Exception, StatusCodes } from '../../utils';
 import { User } from '../models/User';
 import { ResI } from '../../types/res';
 import { ProfileStatus } from '../enums/user.enums';
-import moment from 'moment';
+// import moment from 'moment';
 import { getUserPlain } from '../utils/getPlainUser';
 import { Role } from '../models/Role';
-import { EmailType, TriggeredBy } from '../../emailHistory/enums/emailHistory';
+// import { EmailType, TriggeredBy } from '../../emailHistory/enums/emailHistory';
 
 //You can import model here
 
@@ -74,44 +74,44 @@ class UserService {
 		};
 	}
 
-	static async forceResetPassword(id: number): Promise<ResI> {
-		const user = await User.getUserById(id);
+	// static async forceResetPassword(id: number): Promise<ResI> {
+	// 	const user = await User.getUserById(id);
 
-		if (!user) {
-			throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
-		}
+	// 	if (!user) {
+	// 		throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
+	// 	}
 
-		const passwordRecoveryCode = generateVerificationCode();
+	// 	const passwordRecoveryCode = generateVerificationCode();
 
-		const emailSubject = 'Password Recovery';
-		const emailBody = `Your password recovery token is: ${passwordRecoveryCode}. This token will expire in 5 minutes.`;
+	// 	const emailSubject = 'Password Recovery';
+	// 	const emailBody = `Your password recovery token is: ${passwordRecoveryCode}. This token will expire in 5 minutes.`;
 
-		const passwordRecoveryCodeHash = await hashPassword(passwordRecoveryCode, 6);
-		const expiryTime = moment().add(5, 'minutes').toDate();
+	// 	const passwordRecoveryCodeHash = await hashPassword(passwordRecoveryCode, 6);
+	// 	const expiryTime = moment().add(5, 'minutes').toDate();
 
-		await User.setPasswordRecoveryAndExpiry(user, passwordRecoveryCodeHash, expiryTime);
+	// 	await User.setPasswordRecoveryAndExpiry(user, passwordRecoveryCodeHash, expiryTime);
 
-		const data = await sendEmail({
-			recipientsAddresses: [{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
-			htmlContent: emailBody,
-			subject: emailSubject,
-			ccAddresses: [],
-			emailType: EmailType.USER_ACCOUNT,
-			triggeredBy: TriggeredBy.ADMIN,
-			triggerInfo: { user_email: user.email },
-		});
+	// 	const data = await sendEmail({
+	// 		recipientsAddresses: [{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
+	// 		htmlContent: emailBody,
+	// 		subject: emailSubject,
+	// 		ccAddresses: [],
+	// 		emailType: EmailType.USER_ACCOUNT,
+	// 		triggeredBy: TriggeredBy.ADMIN,
+	// 		triggerInfo: { user_email: user.email },
+	// 	});
 
-		if (!data) {
-			throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
-		}
+	// 	if (!data) {
+	// 		throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
+	// 	}
 
-		await User.forceResetPassword(user);
-		const userPlain = getUserPlain(user);
-		return {
-			msg: 'OK',
-			data: userPlain,
-		};
-	}
+	// 	await User.forceResetPassword(user);
+	// 	const userPlain = getUserPlain(user);
+	// 	return {
+	// 		msg: 'OK',
+	// 		data: userPlain,
+	// 	};
+	// }
 
 	static async updateUserRole(id: number, roleName: string): Promise<ResI> {
 		const user = await User.getUserById(id);

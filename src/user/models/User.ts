@@ -124,7 +124,7 @@ export class User extends Model {
 		type: DataType.STRING,
 		allowNull: true,
 	})
-	email_verification_token?: string;
+	verification_token?: string;
 
 	@Column({
 		type: DataType.DATE,
@@ -190,7 +190,7 @@ export class User extends Model {
 	): Promise<void> {
 		await User.update(
 			{
-				email_verification_token: verificationCode,
+				verification_token: verificationCode,
 				verification_token_expiry: expiryTime,
 			},
 			{
@@ -202,7 +202,7 @@ export class User extends Model {
 	static async verifyUser(user: User): Promise<void> {
 		await user.update({
 			verification_token_expiry: null,
-			email_verification_token: null,
+			verification_token: null,
 			is_verified: true,
 		});
 	}

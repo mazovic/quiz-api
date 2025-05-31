@@ -28,11 +28,11 @@ const unbanUser = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json(data);
 };
 
-const forceResetPassword = async (req: Request, res: Response): Promise<void> => {
-	const id = +req.params.id;
-	const data = await UserService.forceResetPassword(id);
-	res.status(StatusCodes.OK).json(data);
-};
+// const forceResetPassword = async (req: Request, res: Response): Promise<void> => {
+// 	const id = +req.params.id;
+// 	const data = await UserService.forceResetPassword(id);
+// 	res.status(StatusCodes.OK).json(data);
+// };
 
 const updateUserRole = async (req: Request, res: Response): Promise<void> => {
 	if (!req.body) {
@@ -54,7 +54,7 @@ export default {
 	listAllUsers,
 	banUser,
 	unbanUser,
-	forceResetPassword,
+	//forceResetPassword,
 	getUserById,
 	updateUserRole,
 	deleteUser,

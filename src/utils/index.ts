@@ -14,7 +14,7 @@ import {
 	verifyRefreshToken,
 } from './jwt';
 export { generateAccessToken, generateRefreshToken, generateTokens, verifyAccessToken, verifyRefreshToken };
-export { sendEmail } from './mailer';
+// export { sendEmail } from './mailer';
 export { generateVerificationCode } from './generateVerificationCode';
 import { compareDates, isStillValid, parseExpiryToSeconds } from './moment';
 export { compareDates, isStillValid, parseExpiryToSeconds };

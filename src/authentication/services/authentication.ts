@@ -6,7 +6,7 @@ import {
 	generateVerificationCode,
 	hashPassword,
 	isStillValid,
-	sendEmail,
+	// sendEmail,
 	StatusCodes,
 	verifyAccessToken,
 	verifyPassword,
@@ -205,20 +205,20 @@ class Authentication {
 		const verificationCode = generateVerificationCode();
 		const expiryTime = moment().add(5, 'minutes').toDate();
 
-		const emailSubject = 'Please verify your email';
-		const emailBody = `Enter the following code to verify your email: <strong>${verificationCode}</strong>`;
+		// const emailSubject = 'Please verify your email';
+		// const emailBody = `Enter the following code to verify your email: <strong>${verificationCode}</strong>`;
 
 		await User.setVerificationCodeAndExpiry(user.id, verificationCode, expiryTime);
 
-		const data = await sendEmail(
-			[{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
-			emailBody,
-			emailSubject
-		);
+		// const data = await sendEmail(
+		// 	[{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
+		// 	emailBody,
+		// 	emailSubject
+		// );
 
-		if (!data) {
-			throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
-		}
+		// if (!data) {
+		// 	throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
+		// }
 
 		return { msg: 'Verification code sent to email.' };
 	}
@@ -255,23 +255,23 @@ class Authentication {
 
 		const passwordRecoveryCode = generateVerificationCode();
 
-		const emailSubject = 'Password Recovery';
-		const emailBody = `Your password recovery token is: ${passwordRecoveryCode}. This token will expire in 5 minutes.`;
+		// const emailSubject = 'Password Recovery';
+		// const emailBody = `Your password recovery token is: ${passwordRecoveryCode}. This token will expire in 5 minutes.`;
 
 		const passwordRecoveryCodeHash = await hashPassword(passwordRecoveryCode, 6);
 		const expiryTime = moment().add(5, 'minutes').toDate();
 
 		await User.setPasswordRecoveryAndExpiry(user, passwordRecoveryCodeHash, expiryTime);
 
-		const data = await sendEmail(
-			[{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
-			emailBody,
-			emailSubject
-		);
+		// const data = await sendEmail(
+		// 	[{ name: `${user.firstname} ${user.lastname}`, email: user.email }],
+		// 	emailBody,
+		// 	emailSubject
+		// );
 
-		if (!data) {
-			throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
-		}
+		// if (!data) {
+		// 	throw new Exception(StatusCodes.SERVICE_UNAVAILABLE);
+		// }
 
 		return { msg: 'Password recovery token sent to email.' };
 	}

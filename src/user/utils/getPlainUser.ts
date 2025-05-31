@@ -8,7 +8,7 @@ export const getUserPlain = (user: User): UserI => {
 	delete userPlain.refresh_token_hash;
 	delete userPlain.password_recovery_code_hash;
 	delete userPlain.password_recovery_code_expiry;
-	delete userPlain.email_verification_token;
+	delete userPlain.verification_token;
 	delete userPlain.verification_token_expiry;
 
 	return userPlain as UserI;
