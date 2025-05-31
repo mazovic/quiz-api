@@ -4,6 +4,7 @@ import { Category } from './Category';
 @Table({
 	tableName: 'subcategories',
 	timestamps: false,
+	underscored: false,
 })
 export class SubCategory extends Model {
 	@Column({

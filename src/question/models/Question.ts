@@ -65,9 +65,13 @@ export class Question extends Model {
 		return await Question.findByPk(id);
 	}
 
-	static async getAllQuestions(subCategoryId: number, questionCount: number): Promise<Question[]> {
+	static async getAllQuestions(
+		subCategoryId: number,
+		questionCount: number,
+		difficulty: Difficulty
+	): Promise<Question[]> {
 		return await Question.findAll({
-			where: { subCategoryId },
+			where: { subCategoryId, difficulty },
 			limit: questionCount,
 			order: [Sequelize.literal('RAND()')],
 		});

@@ -1,10 +1,10 @@
-import { Question } from '../models/Question';
+import { Difficulty, Question } from '../models/Question';
 import { ResI } from '../../types/res';
 import { Exception, StatusCodes } from '../../utils';
 
 class QuestionService {
-	static async listAllQuestions(subCategoryId: number, questionCount: number): Promise<ResI> {
-		const questions = await Question.getAllQuestions(subCategoryId, questionCount);
+	static async listAllQuestions(subCategoryId: number, questionCount: number, difficulty: Difficulty): Promise<ResI> {
+		const questions = await Question.getAllQuestions(subCategoryId, questionCount, difficulty);
 		return { msg: 'OK', data: questions };
 	}
 

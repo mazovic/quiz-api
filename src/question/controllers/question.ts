@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Exception, StatusCodes } from '../../utils';
 import QuestionService from '../services/question';
+import { Difficulty } from '../models/Question';
 
 const createQuestion = async (req: Request, res: Response): Promise<void> => {
 	if (!req.body) {
@@ -15,12 +16,9 @@ const createQuestion = async (req: Request, res: Response): Promise<void> => {
 const listAllQuestions = async (req: Request, res: Response): Promise<void> => {
 	const subCategoryId = req.query.subCategoryId as string;
 	const questionCount = req.query.questionCount as string;
+	const difficulty = req.query.difficulty as Difficulty;
 
-	if (!subCategoryId || !questionCount) {
-		throw new Exception(StatusCodes.BAD_REQUEST, 'Sub category ID and question count are required');
-	}
-
-	const data = await QuestionService.listAllQuestions(+subCategoryId, +questionCount);
+	const data = await QuestionService.listAllQuestions(+subCategoryId, +questionCount, difficulty);
 
 	res.status(StatusCodes.OK).json(data);
 };
