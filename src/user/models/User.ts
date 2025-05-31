@@ -2,6 +2,7 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize
 import { Role } from './Role';
 import { Currency, PreferredLanguage, ProfileStatus } from '../enums/user.enums';
 import { CreateUserI } from '../types/createUser';
+import { Op } from 'sequelize';
 
 @Table({
 	tableName: 'users',
@@ -49,14 +50,14 @@ export class User extends Model {
 		type: DataType.STRING(100),
 		allowNull: true,
 	})
-	salt!: string | null;
+	salt?: string;
 
 	@ForeignKey(() => Role)
 	@Column({
 		type: DataType.INTEGER,
-		allowNull: false,
+		allowNull: true,
 	})
-	role_id!: number;
+	role_id?: number;
 
 	@BelongsTo(() => Role, { foreignKey: 'role_id', as: 'role' })
 	role!: Role;
@@ -72,7 +73,7 @@ export class User extends Model {
 		type: DataType.STRING(20),
 		allowNull: true,
 	})
-	phone_number!: string | null;
+	phone_number?: string;
 
 	@Column({
 		type: DataType.BOOLEAN,
@@ -85,13 +86,13 @@ export class User extends Model {
 		type: DataType.STRING(100),
 		allowNull: true,
 	})
-	password_recovery_code_hash!: string | null;
+	password_recovery_code_hash?: string;
 
 	@Column({
 		type: DataType.DATE,
 		allowNull: true,
 	})
-	password_recovery_code_expiry!: Date | null;
+	password_recovery_code_expiry?: Date;
 
 	@Column({
 		type: DataType.ENUM(...Object.values(PreferredLanguage)),
@@ -107,11 +108,11 @@ export class User extends Model {
 	})
 	preferred_currency!: Currency;
 
-	@Column(DataType.DATE)
-	createdAt!: Date;
+	@Column({ type: DataType.DATE, allowNull: true })
+	createdAt?: Date;
 
-	@Column(DataType.DATE)
-	updatedAt!: Date;
+	@Column({ type: DataType.DATE, allowNull: true })
+	updatedAt?: Date;
 
 	@Column({
 		type: DataType.DATE,
@@ -123,13 +124,19 @@ export class User extends Model {
 		type: DataType.STRING,
 		allowNull: true,
 	})
-	verification_token?: string;
+	email_verification_token?: string;
 
 	@Column({
 		type: DataType.DATE,
 		allowNull: true,
 	})
 	verification_token_expiry?: Date;
+
+	@Column({
+		type: DataType.DATE,
+		allowNull: true,
+	})
+	deletedAt?: Date;
 
 	static async getUserByEmail(email: string): Promise<User | null> {
 		return await User.findOne({
@@ -166,7 +173,8 @@ export class User extends Model {
 			role_id: userData.roleId,
 		});
 
-		return user;
+		// Reload the user with the role relation for auth
+		return (await this.getUserById(user.id)) as User;
 	}
 
 	static async updateLogOutAt(user: User): Promise<void> {
@@ -182,7 +190,7 @@ export class User extends Model {
 	): Promise<void> {
 		await User.update(
 			{
-				verification_token: verificationCode,
+				email_verification_token: verificationCode,
 				verification_token_expiry: expiryTime,
 			},
 			{
@@ -194,7 +202,7 @@ export class User extends Model {
 	static async verifyUser(user: User): Promise<void> {
 		await user.update({
 			verification_token_expiry: null,
-			verification_token: null,
+			email_verification_token: null,
 			is_verified: true,
 		});
 	}
@@ -215,6 +223,56 @@ export class User extends Model {
 			password_recovery_code_hash: null,
 			password_recovery_code_expiry: null,
 			password_hash: newPasswordHash,
+			salt: null,
+		});
+	}
+	static async listAllUsers(page: number, limit: number, searchText: string): Promise<User[]> {
+		return await User.findAll({
+			offset: (page - 1) * limit,
+			limit: limit,
+			where: {
+				[Op.or]: [
+					{ firstname: { [Op.like]: `%${searchText}%` } },
+					{ lastname: { [Op.like]: `%${searchText}%` } },
+					{ email: { [Op.like]: `%${searchText}%` } },
+				],
+				profile_status: {
+					[Op.or]: [ProfileStatus.NORMAL, ProfileStatus.EMAIL_VERIFICATION],
+				},
+			},
+			include: [
+				{
+					model: Role,
+					as: 'role',
+					attributes: ['id', 'name'],
+				},
+			],
+		});
+	}
+
+	static async banUser(user: User): Promise<void> {
+		await user.update({ profile_status: ProfileStatus.BANNED });
+	}
+
+	static async unbanUser(user: User): Promise<void> {
+		await user.update({ profile_status: ProfileStatus.NORMAL });
+	}
+
+	static async forceResetPassword(user: User): Promise<void> {
+		await user.update({
+			password_hash: '',
+			salt: null,
+		});
+	}
+
+	static async updateUserRole(user: User, roleId: number): Promise<User> {
+		return await user.update({ role_id: roleId });
+	}
+
+	static async deleteUser(user: User): Promise<void> {
+		await user.update({
+			deletedAt: new Date(),
+			profile_status: ProfileStatus.DELETED,
 		});
 	}
 }
