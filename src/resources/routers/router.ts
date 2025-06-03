@@ -4,6 +4,6 @@ import { catchAsync } from '../../utils';
 
 const router: Router = express.Router();
 
-router.get('/', catchAsync(controller.listResources));
+router.get('/:resourceLevel', catchAsync(controller.listResources));
 
 export default router;
