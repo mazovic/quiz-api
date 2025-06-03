@@ -2,6 +2,7 @@ import { Category } from '../models/Category';
 import { ResI } from '../../types/res';
 import { Exception, StatusCodes } from '../../utils';
 import { SubCategory } from '../models/SubCategory';
+import { User } from '../../user/models/User';
 
 class CategoryService {
 	static async listAllCategories(): Promise<ResI> {
@@ -9,8 +10,16 @@ class CategoryService {
 		return { msg: 'OK', data: categories };
 	}
 
-	static async listAllSubCategories(): Promise<ResI> {
-		const subCategories = await SubCategory.getAllSubCategories();
+	static async listAllSubCategories(userId?: number): Promise<ResI> {
+		let user: User | null = null;
+		if (userId) {
+			user = await User.getUserById(userId);
+			if (!user) {
+				throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
+			}
+		}
+
+		const subCategories = await SubCategory.getAllSubCategories(user?.level);
 		return { msg: 'OK', data: subCategories };
 	}
 

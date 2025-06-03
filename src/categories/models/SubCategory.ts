@@ -1,5 +1,7 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { Category } from './Category';
+import { Op } from 'sequelize';
+import { UserLevel } from '../../user/models/User';
 
 @Table({
 	tableName: 'subcategories',
@@ -34,9 +36,20 @@ export class SubCategory extends Model {
 		return await SubCategory.findByPk(id);
 	}
 
-	static async getAllSubCategories(): Promise<SubCategory[]> {
+	static async getAllSubCategories(userLevel?: UserLevel): Promise<SubCategory[]> {
+		const levels = [];
+		if (userLevel === UserLevel.BEGINNER) {
+			levels.push(UserLevel.BEGINNER);
+		} else if (userLevel === UserLevel.INTERMEDIATE) {
+			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE);
+		} else if (userLevel === UserLevel.ADVANCED) {
+			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+		} else {
+			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+		}
 		return await SubCategory.findAll({
 			include: [{ model: Category, attributes: ['name'] }],
+			where: { name: { [Op.in]: [...levels] } },
 		});
 	}
 

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Exception, StatusCodes } from '../../utils';
 import CategoryService from '../services/category';
+import Authentication from '../../authentication/services/authentication';
 
 const createCategory = async (req: Request, res: Response): Promise<void> => {
 	if (!req.body) {
@@ -20,6 +21,14 @@ const listAllCategories = async (req: Request, res: Response): Promise<void> => 
 };
 
 const listAllSubCategories = async (req: Request, res: Response): Promise<void> => {
+	const authHeader = req.headers.authorization;
+	if (authHeader) {
+		const decoded = await Authentication.verifyAccessToken(authHeader.split(' ')[1]);
+		const id = decoded.data.user.id;
+		const data = await CategoryService.listAllSubCategories(id);
+		res.status(StatusCodes.OK).json(data);
+	}
+
 	const data = await CategoryService.listAllSubCategories();
 	res.status(StatusCodes.OK).json(data);
 };
