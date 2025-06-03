@@ -4,6 +4,11 @@ import { Currency, PreferredLanguage, ProfileStatus } from '../enums/user.enums'
 import { CreateUserI } from '../types/createUser';
 import { Op } from 'sequelize';
 
+export enum UserLevel {
+	BEGINNER = 'beginner',
+	INTERMEDIATE = 'intermediate',
+	ADVANCED = 'advanced',
+}
 @Table({
 	tableName: 'users',
 	timestamps: true,
@@ -137,6 +142,12 @@ export class User extends Model {
 		allowNull: true,
 	})
 	deletedAt?: Date;
+
+	@Column({
+		type: DataType.ENUM(...Object.values(UserLevel)),
+		allowNull: true,
+	})
+	level?: UserLevel;
 
 	static async getUserByEmail(email: string): Promise<User | null> {
 		return await User.findOne({
@@ -274,5 +285,9 @@ export class User extends Model {
 			deletedAt: new Date(),
 			profile_status: ProfileStatus.DELETED,
 		});
+	}
+
+	static async setUserLevel(user: User, level: UserLevel): Promise<void> {
+		await user.update({ level });
 	}
 }

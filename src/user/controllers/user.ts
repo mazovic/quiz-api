@@ -50,6 +50,12 @@ const deleteUser = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.DELETED).end();
 };
 
+const setUserLevel = async (req: Request, res: Response): Promise<void> => {
+	const id = +req.user.id;
+	const data = await UserService.setUserLevel(id, req.body.level);
+	res.status(StatusCodes.OK).json(data);
+};
+
 export default {
 	listAllUsers,
 	banUser,
@@ -58,4 +64,5 @@ export default {
 	getUserById,
 	updateUserRole,
 	deleteUser,
+	setUserLevel,
 };

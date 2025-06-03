@@ -17,6 +17,8 @@ router.post('/:id/ban', catchAsync(controller.banUser));
 
 router.post('/:id/unban', catchAsync(controller.unbanUser));
 
+router.put('/level', catchAsync(controller.setUserLevel));
+
 // router.post('/:id/force-reset-password', catchAsync(controller.forceResetPassword));
 
 export default router;

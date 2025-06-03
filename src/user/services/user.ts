@@ -1,5 +1,5 @@
 import { Exception, StatusCodes } from '../../utils';
-import { User } from '../models/User';
+import { User, UserLevel } from '../models/User';
 import { ResI } from '../../types/res';
 import { ProfileStatus } from '../enums/user.enums';
 // import moment from 'moment';
@@ -143,6 +143,23 @@ class UserService {
 		}
 
 		await User.deleteUser(user);
+	}
+
+	static async setUserLevel(id: number, level: UserLevel): Promise<ResI> {
+		const user = await User.getUserById(id);
+		if (!user) {
+			throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
+		}
+
+		await User.setUserLevel(user, level);
+
+		const updatedUser = await User.getUserById(id);
+		const userPlain = getUserPlain(updatedUser!);
+
+		return {
+			msg: 'OK',
+			data: userPlain,
+		};
 	}
 }
 
