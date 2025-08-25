@@ -48,7 +48,7 @@ class Authentication {
 		//4-create user
 		const newUser = await User.createUser({
 			email: userData.email,
-			firstname: userData.email,
+			firstname: userData.firstname,
 			lastname: userData.lastname,
 			passwordHash,
 			roleId: role.id,

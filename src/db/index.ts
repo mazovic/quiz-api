@@ -8,6 +8,7 @@ import { Category } from '../categories/models/Category';
 import { SubCategory } from '../categories/models/SubCategory';
 import { Question } from '../question/models/Question';
 import { Resource } from '../resources/models/Resouces';
+import { Result } from '../results/models/Results';
 
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env as keyof typeof config];
@@ -20,7 +21,7 @@ const sequelize = new Sequelize({
 	port: dbConfig.port,
 	dialect: dbConfig.dialect,
 	logging: dbConfig.logging,
-	models: [User, Role, Address, RefreshTokens, Category, SubCategory, Question, Resource], // Register models here
+	models: [User, Role, Address, RefreshTokens, Category, SubCategory, Question, Resource, Result], // Register models here
 	define: {
 		underscored: true,
 		timestamps: true,

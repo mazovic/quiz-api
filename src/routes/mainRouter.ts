@@ -5,6 +5,7 @@ import addressRouter from '../address/routers/mainRouter';
 import categoryRouter from '../categories/routers/mainRouter';
 import questionRouter from '../question/routers/mainRouter';
 import resourceRouter from '../resources/routers/router';
+import resultRouter from '../results/routers/mainRouter';
 
 const mainRouter: Router = express.Router();
 
@@ -19,5 +20,7 @@ mainRouter.use('/categories', categoryRouter);
 mainRouter.use('/questions', questionRouter);
 
 mainRouter.use('/resources', resourceRouter);
+
+mainRouter.use('/results', resultRouter);
 
 export default mainRouter;
