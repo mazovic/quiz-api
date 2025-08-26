@@ -48,7 +48,7 @@ export class SubCategory extends Model {
 			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
 		}
 		return await SubCategory.findAll({
-			include: [{ model: Category, attributes: ['name'] }],
+			include: [{ model: Category, attributes: ['name', 'id'] }],
 			where: { name: { [Op.in]: [...levels] } },
 		});
 	}
@@ -56,7 +56,7 @@ export class SubCategory extends Model {
 	static async getAllSubCategoriesByCategoryId(categoryId: number): Promise<SubCategory[]> {
 		return await SubCategory.findAll({
 			where: { category_id: categoryId },
-			include: [{ model: Category, attributes: ['name'] }],
+			include: [{ model: Category, attributes: ['name', 'id'] }],
 		});
 	}
 
