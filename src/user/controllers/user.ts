@@ -16,6 +16,12 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json(data);
 };
 
+const getUserProfile = async (req: Request, res: Response): Promise<void> => {
+	const id = +req.user.id;
+	const data = await UserService.getUserProfile(id);
+	res.status(StatusCodes.OK).json(data);
+};
+
 const banUser = async (req: Request, res: Response): Promise<void> => {
 	const id = +req.params.id;
 	const data = await UserService.banUser(id);
@@ -65,4 +71,5 @@ export default {
 	updateUserRole,
 	deleteUser,
 	setUserLevel,
+	getUserProfile,
 };

@@ -7,6 +7,8 @@ const router: Router = express.Router();
 
 router.get('/', catchAsync(controller.listAllUsers));
 
+router.get('/profile', catchAsync(controller.getUserProfile));
+
 router.get('/:id', catchAsync(controller.getUserById));
 
 router.delete('/:id', catchAsync(controller.deleteUser));

@@ -5,6 +5,7 @@ import { ProfileStatus } from '../enums/user.enums';
 // import moment from 'moment';
 import { getUserPlain } from '../utils/getPlainUser';
 import { Role } from '../models/Role';
+import { Result } from '../../results/models/Results';
 // import { EmailType, TriggeredBy } from '../../emailHistory/enums/emailHistory';
 
 //You can import model here
@@ -32,6 +33,25 @@ class UserService {
 		return {
 			msg: 'OK',
 			data: userPlain,
+		};
+	}
+
+	static async getUserProfile(userId: number): Promise<ResI> {
+		const allResults = await Result.listResults();
+		const userResults = {
+			globalRank:
+				allResults.userScores
+					.sort((a, b) => b.totalScore - a.totalScore)
+					.findIndex((res) => res.userId === userId) + 1,
+
+			...allResults.userScores.filter((res) => res.userId === userId)[0],
+
+			userCategoriesScore: allResults.userSubcategoryScores.filter((res) => res.userId === userId),
+		};
+
+		return {
+			msg: 'OK',
+			data: userResults,
 		};
 	}
 

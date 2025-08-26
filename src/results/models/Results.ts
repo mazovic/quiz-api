@@ -1,6 +1,7 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { User } from '../../user/models/User';
 import { Category } from '../../categories/models/Category';
+import { SubCategory } from '../../categories/models/SubCategory';
 
 @Table({
 	tableName: 'results',
@@ -33,6 +34,15 @@ export class Result extends Model {
 	})
 	categoryId!: number;
 
+	// ✅ New subcategory_id foreign key
+	@ForeignKey(() => SubCategory)
+	@Column({
+		type: DataType.INTEGER,
+		allowNull: false, // Change to true if optional
+		field: 'subcategory_id',
+	})
+	subcategoryId!: number;
+
 	@Column({
 		type: DataType.INTEGER,
 		allowNull: false,
@@ -60,9 +70,12 @@ export class Result extends Model {
 	@BelongsTo(() => Category)
 	category!: Category;
 
+	// ✅ New association for Subcategory
+	@BelongsTo(() => SubCategory)
+	subcategory!: SubCategory;
 	static async getResultById(id: number): Promise<Result | null> {
 		return await Result.findByPk(id, {
-			include: [User, Category],
+			include: [User, Category, SubCategory],
 		});
 	}
 
@@ -93,16 +106,21 @@ export class Result extends Model {
 			userId: number;
 			firstName: string;
 			lastName: string;
+			email: string;
 			totalScore: number;
 			quizCount: number;
 		}>;
-		userCategoryScores: Array<{
+		userSubcategoryScores: Array<{
 			userId: number;
 			firstName: string;
 			lastName: string;
+			email: string;
 			categoryId: number;
 			categoryName: string;
-			categoryScore: number;
+			subcategoryId: number;
+			subcategoryName: string;
+			subcategoryScore: number;
+			quizzesTaken: number;
 		}>;
 	}> {
 		const sequelize = this.sequelize!;
@@ -113,6 +131,8 @@ export class Result extends Model {
 				u.id as "userId",
 				u.firstname as "firstName",
 				u.lastname as "lastName",
+				u.email as email,
+				u.created_at as joinedDate,
 				COALESCE(SUM(r.score), 0) as "totalScore",
 				COUNT(r.id) as "quizCount"
 			FROM users u
@@ -121,28 +141,33 @@ export class Result extends Model {
 			ORDER BY "totalScore" DESC
 		`;
 
-		// Query 2: Get sum of results for each user per category
-		const userCategoryScoresQuery = `
+		// Query 2: Get sum of results for each user per subcategory
+		const userSubcategoryScoresQuery = `
 			SELECT 
-				u.id as "userId",
-				u.firstname as "firstName",
-				u.lastname as "lastName",
-				c.id as "categoryId",
-				c.name as "categoryName",
-				SUM(r.score) as "categoryScore"
+				u.id AS "userId",
+				u.firstname AS "firstName",
+				u.lastname AS "lastName",
+				u.email AS email,
+				c.id AS "categoryId",
+				c.name AS "categoryName",
+				sc.id AS "subcategoryId",
+				sc.name AS "subcategoryName",
+				SUM(r.score) AS "subcategoryScore",
+				COUNT(DISTINCT r.id) AS "quizzesTaken"
 			FROM results r
 			INNER JOIN users u ON r.user_id = u.id
 			INNER JOIN categories c ON r.category_id = c.id
-			GROUP BY u.id, u.firstname, u.lastname, c.id, c.name
-			ORDER BY u.id, c.id
+			INNER JOIN subcategories sc ON r.subcategory_id = sc.id
+			GROUP BY u.id, u.firstname, u.lastname, u.email, c.id, c.name, sc.id, sc.name
+			ORDER BY u.id, c.id, sc.id
 		`;
 
-		const [userScores, userCategoryScores] = await Promise.all([
+		const [userScores, userSubcategoryScores] = await Promise.all([
 			sequelize.query(userScoresQuery, {
 				type: 'SELECT',
 				raw: true,
 			}),
-			sequelize.query(userCategoryScoresQuery, {
+			sequelize.query(userSubcategoryScoresQuery, {
 				type: 'SELECT',
 				raw: true,
 			}),
@@ -153,16 +178,22 @@ export class Result extends Model {
 				userId: row.userId,
 				firstName: row.firstName,
 				lastName: row.lastName,
+				email: row.email,
 				totalScore: parseInt(row.totalScore) || 0,
 				quizCount: parseInt(row.quizCount) || 0,
+				joinedDate: row.joinedDate,
 			})),
-			userCategoryScores: userCategoryScores.map((row: any) => ({
+			userSubcategoryScores: userSubcategoryScores.map((row: any) => ({
 				userId: row.userId,
 				firstName: row.firstName,
 				lastName: row.lastName,
+				email: row.email,
 				categoryId: row.categoryId,
 				categoryName: row.categoryName,
-				categoryScore: parseInt(row.categoryScore) || 0,
+				subcategoryId: row.subcategoryId,
+				subcategoryName: row.subcategoryName,
+				subcategoryScore: parseInt(row.subcategoryScore) || 0,
+				quizzesTaken: parseInt(row.quizzesTaken) || 0,
 			})),
 		};
 	}
