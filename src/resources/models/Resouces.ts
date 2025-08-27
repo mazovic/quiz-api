@@ -55,11 +55,15 @@ export class Resource extends Model {
 	})
 	resource_description?: string;
 
-	static async listResources(resourceLevel: ResourceLevel): Promise<Resource[]> {
+	static async listResourcesByLevel(resourceLevel: ResourceLevel): Promise<Resource[]> {
 		return await Resource.findAll({
 			where: {
 				resource_level: resourceLevel,
 			},
 		});
+	}
+
+	static async listResources(): Promise<Resource[]> {
+		return await Resource.findAll();
 	}
 }

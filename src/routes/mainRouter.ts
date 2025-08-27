@@ -4,7 +4,7 @@ import userRouter from '../user/routers/mainRouter';
 import addressRouter from '../address/routers/mainRouter';
 import categoryRouter from '../categories/routers/mainRouter';
 import questionRouter from '../question/routers/mainRouter';
-import resourceRouter from '../resources/routers/router';
+import resourceRouter from '../resources/routers/mainRouter';
 import resultRouter from '../results/routers/mainRouter';
 
 const mainRouter: Router = express.Router();
