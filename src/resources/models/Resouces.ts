@@ -66,4 +66,20 @@ export class Resource extends Model {
 	static async listResources(): Promise<Resource[]> {
 		return await Resource.findAll();
 	}
+
+	static async createResource(resource: Partial<Resource>): Promise<Resource> {
+		return await Resource.create(resource);
+	}
+
+	static async updateResource(resource: Resource, resourceData: Partial<Resource>): Promise<Resource> {
+		return await resource.update(resourceData);
+	}
+
+	static async deleteResource(resource: Resource): Promise<void> {
+		await resource.destroy();
+	}
+
+	static async getResourceById(id: number): Promise<Resource | null> {
+		return await Resource.findByPk(id);
+	}
 }

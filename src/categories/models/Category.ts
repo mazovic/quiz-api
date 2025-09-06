@@ -74,4 +74,8 @@ export class Category extends Model {
 			where: { id },
 		});
 	}
+
+	static async deleteCategory(cat: Category): Promise<void> {
+		await cat.destroy();
+	}
 }

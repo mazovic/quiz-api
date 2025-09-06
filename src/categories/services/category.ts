@@ -75,6 +75,26 @@ class CategoryService {
 		const newSubCategory = await SubCategory.createSubCategory(subCategory);
 		return { msg: 'OK', data: newSubCategory };
 	}
+
+	static async deleteCategory(id: number): Promise<void> {
+		const cat = await Category.getCatById(id);
+
+		if (!cat) {
+			throw new Exception(StatusCodes.NOT_FOUND, 'Category not found');
+		}
+
+		await Category.deleteCategory(cat);
+	}
+
+	static async deleteSubCategory(id: number): Promise<void> {
+		const cat = await SubCategory.getSubCategoryById(id);
+
+		if (!cat) {
+			throw new Exception(StatusCodes.NOT_FOUND, 'SubCategory not found');
+		}
+
+		await SubCategory.deleteSubCategory(cat);
+	}
 }
 
 export default CategoryService;

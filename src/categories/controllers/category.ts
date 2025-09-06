@@ -72,6 +72,18 @@ const updateSubCategory = async (req: Request, res: Response): Promise<void> => 
 	const data = await CategoryService.updateSubCategory(+req.params.id, req.body);
 	res.status(StatusCodes.CREATED).json(data);
 };
+
+const deleteCategory = async (req: Request, res: Response): Promise<void> => {
+	const id = +req.params.id;
+	await CategoryService.deleteCategory(id);
+	res.status(StatusCodes.DELETED).end();
+};
+
+const deleteSubCategory = async (req: Request, res: Response): Promise<void> => {
+	const id = +req.params.id;
+	await CategoryService.deleteSubCategory(id);
+	res.status(StatusCodes.DELETED).end();
+};
 export default {
 	createCategory,
 	listAllCategories,
@@ -82,4 +94,6 @@ export default {
 	updateCategory,
 	listAllSubCategoriesAdmin,
 	updateSubCategory,
+	deleteCategory,
+	deleteSubCategory,
 };

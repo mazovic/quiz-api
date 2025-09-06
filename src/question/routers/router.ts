@@ -8,5 +8,6 @@ const router: Router = express.Router();
 router.get('/', catchAsync(controller.listAllQuestionsAdmin));
 router.post('/', catchAsync(controller.createQuestion));
 router.put('/:id', catchAsync(controller.updateQuestion));
+router.delete('/:id', catchAsync(controller.deleteQuestion));
 
 export default router;
