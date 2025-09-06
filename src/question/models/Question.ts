@@ -103,7 +103,9 @@ export class Question extends Model {
 	}
 
 	static async getAllQuestionsAdmin(): Promise<Question[]> {
-		return await Question.findAll();
+		return await Question.findAll({
+			include: [{ model: SubCategory, attributes: ['name', 'id'] }],
+		});
 	}
 	static async createQuestion(question: Partial<Question>): Promise<Question> {
 		return await Question.create(question);
