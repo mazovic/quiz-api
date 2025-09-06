@@ -43,6 +43,34 @@ class CategoryService {
 		return { msg: 'OK', data: newCategory };
 	}
 
+	static async updateCategory(id: number, name: string): Promise<ResI> {
+		const cat = await Category.getCatById(id);
+		if (!cat) {
+			throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
+		}
+
+		const newCat = await Category.updateName(cat, name);
+
+		return {
+			msg: 'OK',
+			data: newCat,
+		};
+	}
+
+	static async updateSubCategory(id: number, body: Partial<SubCategory>): Promise<ResI> {
+		const cat = await SubCategory.getSubCategoryById(id);
+		if (!cat) {
+			throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
+		}
+
+		const newCat = await SubCategory.updateSubCategory(cat, body);
+
+		return {
+			msg: 'OK',
+			data: newCat,
+		};
+	}
+
 	static async createSubCategory(subCategory: Partial<SubCategory>): Promise<ResI> {
 		const newSubCategory = await SubCategory.createSubCategory(subCategory);
 		return { msg: 'OK', data: newSubCategory };

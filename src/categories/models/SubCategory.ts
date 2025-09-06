@@ -37,20 +37,26 @@ export class SubCategory extends Model {
 	}
 
 	static async getAllSubCategories(userLevel?: UserLevel): Promise<SubCategory[]> {
-		const levels = [];
-		if (userLevel === UserLevel.BEGINNER) {
-			levels.push(UserLevel.BEGINNER);
-		} else if (userLevel === UserLevel.INTERMEDIATE) {
-			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE);
-		} else if (userLevel === UserLevel.ADVANCED) {
-			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+		if (userLevel) {
+			const levels = [];
+			if (userLevel === UserLevel.BEGINNER) {
+				levels.push(UserLevel.BEGINNER);
+			} else if (userLevel === UserLevel.INTERMEDIATE) {
+				levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE);
+			} else if (userLevel === UserLevel.ADVANCED) {
+				levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+			} else {
+				levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+			}
+			return await SubCategory.findAll({
+				include: [{ model: Category, attributes: ['name', 'id'] }],
+				where: { name: { [Op.in]: [...levels] } },
+			});
 		} else {
-			levels.push(UserLevel.BEGINNER, UserLevel.INTERMEDIATE, UserLevel.ADVANCED);
+			return await SubCategory.findAll({
+				include: [{ model: Category, attributes: ['name', 'id'] }],
+			});
 		}
-		return await SubCategory.findAll({
-			include: [{ model: Category, attributes: ['name', 'id'] }],
-			where: { name: { [Op.in]: [...levels] } },
-		});
 	}
 
 	static async getAllSubCategoriesByCategoryId(categoryId: number): Promise<SubCategory[]> {

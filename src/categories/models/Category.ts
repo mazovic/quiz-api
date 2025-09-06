@@ -64,4 +64,14 @@ export class Category extends Model {
 	static async createCategory(category: Partial<Category>): Promise<Category> {
 		return await Category.create(category);
 	}
+
+	static async updateName(user: Category, name: string): Promise<Category> {
+		return await user.update({ name });
+	}
+
+	static async getCatById(id: number): Promise<Category | null> {
+		return await Category.findOne({
+			where: { id },
+		});
+	}
 }

@@ -14,6 +14,17 @@ const createCategory = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.CREATED).json(data);
 };
 
+const updateCategory = async (req: Request, res: Response): Promise<void> => {
+	if (!req.body) {
+		throw new Exception(StatusCodes.BAD_REQUEST, 'No body provided');
+	}
+
+	const name = req.body.name;
+
+	const data = await CategoryService.updateCategory(+req.params.id, name);
+	res.status(StatusCodes.CREATED).json(data);
+};
+
 const listAllCategories = async (req: Request, res: Response): Promise<void> => {
 	const data = await CategoryService.listAllCategories();
 
@@ -33,6 +44,11 @@ const listAllSubCategories = async (req: Request, res: Response): Promise<void> 
 	res.status(StatusCodes.OK).json(data);
 };
 
+const listAllSubCategoriesAdmin = async (req: Request, res: Response): Promise<void> => {
+	const data = await CategoryService.listAllSubCategories();
+	res.status(StatusCodes.OK).json(data);
+};
+
 const listAllSubCategoriesByCategoryId = async (req: Request, res: Response): Promise<void> => {
 	const data = await CategoryService.listAllSubCategoriesByCategoryId(+req.params.id);
 	res.status(StatusCodes.OK).json(data);
@@ -48,6 +64,14 @@ const createSubCategory = async (req: Request, res: Response): Promise<void> => 
 	res.status(StatusCodes.CREATED).json(data);
 };
 
+const updateSubCategory = async (req: Request, res: Response): Promise<void> => {
+	if (!req.body) {
+		throw new Exception(StatusCodes.BAD_REQUEST, 'No body provided');
+	}
+
+	const data = await CategoryService.updateSubCategory(+req.params.id, req.body);
+	res.status(StatusCodes.CREATED).json(data);
+};
 export default {
 	createCategory,
 	listAllCategories,
@@ -55,4 +79,7 @@ export default {
 	listAllSubCategoriesByCategoryId,
 	getSubCategoryById,
 	createSubCategory,
+	updateCategory,
+	listAllSubCategoriesAdmin,
+	updateSubCategory,
 };
