@@ -23,6 +23,12 @@ const listAllQuestions = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json(data);
 };
 
+const listAllQuestionsAdmin = async (req: Request, res: Response): Promise<void> => {
+	const data = await QuestionService.listAllQuestionsAdmin();
+
+	res.status(StatusCodes.OK).json(data);
+};
+
 const getQuestionById = async (req: Request, res: Response): Promise<void> => {
 	const id = +req.params.id;
 	const data = await QuestionService.getQuestionById(id);
@@ -59,4 +65,5 @@ export default {
 	updateQuestion,
 	deleteQuestion,
 	getLevelingQuestions,
+	listAllQuestionsAdmin,
 };

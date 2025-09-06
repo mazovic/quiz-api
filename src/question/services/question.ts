@@ -8,6 +8,11 @@ class QuestionService {
 		return { msg: 'OK', data: questions };
 	}
 
+	static async listAllQuestionsAdmin(): Promise<ResI> {
+		const questions = await Question.getAllQuestionsAdmin();
+		return { msg: 'OK', data: questions };
+	}
+
 	static async getQuestionById(id: number): Promise<ResI> {
 		const question = await Question.getQuestionById(id);
 

@@ -102,6 +102,9 @@ export class Question extends Model {
 		});
 	}
 
+	static async getAllQuestionsAdmin(): Promise<Question[]> {
+		return await Question.findAll();
+	}
 	static async createQuestion(question: Partial<Question>): Promise<Question> {
 		return await Question.create(question);
 	}
