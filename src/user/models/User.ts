@@ -239,17 +239,12 @@ export class User extends Model {
 	}
 	static async listAllUsers(page: number, limit: number, searchText: string): Promise<User[]> {
 		return await User.findAll({
-			offset: (page - 1) * limit,
-			limit: limit,
 			where: {
 				[Op.or]: [
 					{ firstname: { [Op.like]: `%${searchText}%` } },
 					{ lastname: { [Op.like]: `%${searchText}%` } },
 					{ email: { [Op.like]: `%${searchText}%` } },
 				],
-				profile_status: {
-					[Op.or]: [ProfileStatus.NORMAL, ProfileStatus.EMAIL_VERIFICATION],
-				},
 			},
 			include: [
 				{

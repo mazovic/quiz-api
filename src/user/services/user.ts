@@ -4,7 +4,6 @@ import { ResI } from '../../types/res';
 import { ProfileStatus } from '../enums/user.enums';
 // import moment from 'moment';
 import { getUserPlain } from '../utils/getPlainUser';
-import { Role } from '../models/Role';
 import { Result } from '../../results/models/Results';
 // import { EmailType, TriggeredBy } from '../../emailHistory/enums/emailHistory';
 
@@ -133,19 +132,19 @@ class UserService {
 	// 	};
 	// }
 
-	static async updateUserRole(id: number, roleName: string): Promise<ResI> {
+	static async updateUserRole(id: number, roleId: number): Promise<ResI> {
 		const user = await User.getUserById(id);
 		if (!user) {
 			throw new Exception(StatusCodes.NOT_FOUND, 'User not found');
 		}
 
-		const role = await Role.findRoleByName(roleName);
+		// const role = await Role.findRoleByName(roleName);
 
-		if (!role) {
-			throw new Exception(StatusCodes.BAD_REQUEST, 'Invalid role');
-		}
+		// if (!role) {
+		// 	throw new Exception(StatusCodes.BAD_REQUEST, 'Invalid role');
+		// }
 
-		await User.updateUserRole(user, role.id);
+		await User.updateUserRole(user, roleId);
 
 		const updatedUser = await User.getUserById(id);
 		const userPlain = getUserPlain(updatedUser!);
